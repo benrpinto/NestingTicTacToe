@@ -1,3 +1,4 @@
+#pragma once
 #include<vector>
 #include<string>
 
@@ -22,6 +23,7 @@ class GameBoard{
 //   void updateBoard();
 //   bool validateMove();
 //   int checkGameEnd();
+//   possible states include in progress, won by each player, tie
    //undo move function
 };
 
