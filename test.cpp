@@ -13,13 +13,13 @@ void Test::allTests(){
 
 void Test::gameStart(){
    GameBoard toTest;
-   assert(toTest.turnTracker == 1);
+   assert(toTest.turnTracker == 0);
    int temp = 0;
    for (auto& Focus : toTest.myPlayers){
-      assert(Focus.id == temp + 1);
+      assert(Focus.id == temp);
       temp++;
    }
-   //assert(toTest.checkGameEnd() == 0);
+   //assert(toTest.checkGameEnd() == inProgress);
    cout<<"Game start check passed\n";
 }
 
