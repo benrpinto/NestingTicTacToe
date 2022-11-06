@@ -15,6 +15,7 @@ int main(int argc, char** argv){
    }
    GameBoard myGame;
    cout<<myGame.display();
-   
+   myGame.progressGame();
+   cout<<"\n\n"<<myGame.display();
    return 0;
 }
