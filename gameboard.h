@@ -70,10 +70,10 @@ class Token{
 class Position{
    public:
    Position();
+   vector<Token> myTokens;
    int getSize();
    int getPlayer();
    void place(Token toPlace);
-   Token myToken;
-//   String display();
+   string display();
 //   void updatePosition;
 };
