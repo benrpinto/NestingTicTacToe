@@ -22,7 +22,7 @@ string GameBoard::display(){
    }
    for(auto& row : boardSpace){
       for(auto& cell : row){
-         toReturn += cell.myToken.display() + " ";
+         toReturn += cell.display() + " ";
       }
       toReturn += "\n";
    }
@@ -83,7 +83,7 @@ bool GameBoard::validateMove(int posX, int posY, int tokenSize){
 //      cout<<"existing position "<<existingSize<<"/"<<existingControl<<"\n";
    }
    //is the token big enough to go there?
-   validMove &= (tokenSize < numSizes && tokenSize > existingSize);
+   validMove &= (tokenSize <= numSizes && tokenSize > existingSize);
 //   cout<<"size check:"<<to_string(validMove)<<"\n";
    //if self consuming isn't allowed, you can't play on top of your own token
    validMove &= (turnTracker != existingControl || selfConsume);
@@ -141,19 +141,26 @@ Token Player::playToken(int tokenSize){
 
 //Position
 Position::Position(){
-   this->myToken = Token(0, nullPlayer);
+   this->myTokens.push_back(Token(0, nullPlayer));
 }
 
 int Position::getSize(){
-   return myToken.getSize();
+   Token topToken = myTokens.back();
+   return topToken.getSize();
 }
 
 int Position::getPlayer(){
-   return myToken.getPlayer();
+   Token topToken = myTokens.back();
+   return topToken.getPlayer();
 }
 
 void Position::place(Token toPlace){
-   myToken = toPlace;
+   myTokens.push_back(toPlace);
+}
+
+string Position::display(){
+   Token topToken = myTokens.back();
+   return topToken.display();
 }
 
 //Token
