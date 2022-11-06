@@ -47,6 +47,8 @@ int GameBoard::progressGame(){
          //extract data from user input
          posX = input.at(0) - '0';
          posY = input.at(1) - '0';
+	 //0 is bottom for the user, but top for us
+	 posY = boardWidth - posY - 1;
          tokenSize = input.at(2) - '0';
 //         cout<<posX<<":"<<posY<<":"<<tokenSize<<"\n";
          validMove = validateMove(posX, posY, tokenSize);
