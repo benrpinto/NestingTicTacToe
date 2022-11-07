@@ -7,6 +7,7 @@ constexpr bool runTests = true;
 using namespace std;
 
 int main(int argc, char** argv){
+   int winner = nullPlayer;
    cout<<"Welcome to Nesting Tic Tac Toe\n";
    if(runTests){
       cout<<"Running tests\n";
@@ -15,7 +16,10 @@ int main(int argc, char** argv){
    }
    GameBoard myGame;
    cout<<myGame.display();
-   myGame.progressGame();
-   cout<<"\n\n"<<myGame.display();
+   while(winner == nullPlayer){
+      winner = myGame.progressGame();
+      cout<<myGame.display();
+   }
+   cout<<"Player "<<winner<<" wins!\n";
    return 0;
 }
