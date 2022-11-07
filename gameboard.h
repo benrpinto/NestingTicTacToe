@@ -29,12 +29,13 @@ class GameBoard{
       vector<vector<Position>> boardSpace;
       vector<Player> myPlayers;
       int checkGameEnd();
+      bool validateMove(int fromX, int fromY, int toX, int toY);
+      bool validatePlace(int posX, int posY, int tokenSize);
 
    public:
       GameBoard();   
       string display();
       int progressGame();
-      bool validateMove(int posX, int posY, int tokenSize);
 
    //undo move function
 };
@@ -76,7 +77,7 @@ class Position{
       int getSize();
       int getPlayer();
       void place(Token toPlace);
-      void move(Position destination);
+      void move(Position *destination);
       string display();
 //      void updatePosition;
 };

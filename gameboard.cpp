@@ -33,12 +33,15 @@ int GameBoard::progressGame(){
    string input;
    int posX;
    int posY;
+   int fromX;
+   int fromY;
+   int toX;
+   int toY;
    int tokenSize;
    bool validMove = false;
 
    while(!validMove){
       getline(cin,input);
-//      cout<<to_string(input.length())<<"\n";
       if(input == "q"){
          //quitting is always a valid mov
          validMove = true;
@@ -49,16 +52,26 @@ int GameBoard::progressGame(){
          posX = input.at(0) - '0';
          posY = input.at(1) - '0';
 	 //0 is bottom for the user, but top for us
-	 posY = boardWidth - posY - 1;
+         posY = boardWidth - posY - 1;
          tokenSize = input.at(2) - '0';
-//         cout<<posX<<":"<<posY<<":"<<tokenSize<<"\n";
-         validMove = validateMove(posX, posY, tokenSize);
+         validMove = validatePlace(posX, posY, tokenSize);
          if(validMove){
             Token toPlay = myPlayers[turnTracker].playToken(tokenSize);
             if(toPlay.getPlayer() != nullPlayer){
                boardSpace[posY][posX].place(toPlay);
             }
-	 }
+         }
+      }else if(input.length() == 5){
+         fromX = input.at(0) - '0';
+         fromY = input.at(1) - '0';
+         fromY = boardWidth - fromY - 1;
+         toX = input.at(3) - '0';
+         toY = input.at(4) - '0';
+         toY = boardWidth - toY - 1;
+         validMove = validateMove(fromX,fromY,toX,toY);
+         if(validMove){
+            boardSpace[fromY][fromX].move(&boardSpace[toY][toX]);
+         }
       }else{
          validMove = false;
       }
@@ -71,7 +84,29 @@ int GameBoard::progressGame(){
    return toReturn;
 }
 
-bool GameBoard::validateMove(int posX, int posY, int tokenSize){
+bool GameBoard::validateMove(int fromX, int fromY, int toX, int toY){
+   bool validMove = true;
+   //check that the from and to positions are on the board
+   validMove &= (fromX < boardWidth && fromX >= 0);
+   validMove &= (fromY < boardWidth && fromY >= 0);
+   validMove &= (toX < boardWidth && toX >= 0);
+   validMove &= (toY < boardWidth && toY >= 0);
+
+   //check that the player owns the token being moved
+   validMove &= (boardSpace[fromY][fromX].getPlayer() == turnTracker);
+
+   //check that the token being moved is larger than the token at the destination
+   validMove &= (boardSpace[fromY][fromX].getSize() >
+      boardSpace[toY][toX].getSize());
+
+   //if self consuming isn't allowed, you can't move on top of your own token
+   validMove &= (selfConsume || (boardSpace[fromY][fromX].getPlayer() !=
+      boardSpace[toY][toX].getPlayer()));
+
+   return validMove;
+}
+
+bool GameBoard::validatePlace(int posX, int posY, int tokenSize){
    bool validMove = true;
    int existingSize = 0;
    int existingControl = nullPlayer;
@@ -79,22 +114,17 @@ bool GameBoard::validateMove(int posX, int posY, int tokenSize){
    //check that move position is on the board
    validMove &= (posX < boardWidth && posX >= 0);
    validMove &= (posY < boardWidth && posY >= 0);
-//   cout<<"position check:"<<to_string(validMove)<<"\n";
    //check what's in the position
    if(validMove){
       existingSize = boardSpace[posY][posX].getSize();
       existingControl = boardSpace[posY][posX].getPlayer();
-//      cout<<"existing position "<<existingSize<<"/"<<existingControl<<"\n";
    }
    //is the token big enough to go there?
    validMove &= (tokenSize <= numSizes && tokenSize > existingSize);
-//   cout<<"size check:"<<to_string(validMove)<<"\n";
    //if self consuming isn't allowed, you can't play on top of your own token
    validMove &= (turnTracker != existingControl || selfConsume);
-//   cout<<"self consume check:"<<to_string(validMove)<<"\n";
    //you can only play tokens you have
    validMove &= myPlayers[turnTracker].hasToken(tokenSize);
-//   cout<<"hasToken check:"<<to_string(validMove)<<"\n";
 
    return validMove;
 }
@@ -263,10 +293,8 @@ void Position::place(Token toPlace){
    myTokens.push_back(toPlace);
 }
 
-void Position::move(Position destination){
-   Token toMove;
-   toMove = myTokens.back();
-   destination.place(toMove);
+void Position::move(Position *destination){
+   destination->place(myTokens.back());
    myTokens.pop_back();
 }
 
