@@ -37,13 +37,14 @@ int GameBoard::progressGame(){
    bool validMove = false;
 
    while(!validMove){
-      cin>>input;
+      getline(cin,input);
+//      cout<<to_string(input.length())<<"\n";
       if(input == "q"){
          //quitting is always a valid mov
          validMove = true;
          //will have to change to accommodate for more than 2 players
          winner = (turnTracker + 1) % numPlayers;
-      }else{
+      }else if(input.length() == 3){
          //extract data from user input
          posX = input.at(0) - '0';
          posY = input.at(1) - '0';
@@ -57,14 +58,17 @@ int GameBoard::progressGame(){
             if(toPlay.getPlayer() != nullPlayer){
                boardSpace[posY][posX].place(toPlay);
             }
-         }else{
-            cout<<"Invalid Move\n";
 	 }
+      }else{
+         validMove = false;
+      }
+      if(!validMove){
+         cout<<"Invalid Move\n";
       }
    }
+   int toReturn = checkGameEnd();
    turnTracker = (turnTracker + 1) % numPlayers;
-   //TODO change to be the result of checkGameEnd
-   return turnTracker;
+   return toReturn;
 }
 
 bool GameBoard::validateMove(int posX, int posY, int tokenSize){
@@ -93,6 +97,108 @@ bool GameBoard::validateMove(int posX, int posY, int tokenSize){
 //   cout<<"hasToken check:"<<to_string(validMove)<<"\n";
 
    return validMove;
+}
+
+int GameBoard::checkGameEnd(){
+   vector<int> playerVictory(numPlayers);
+   int counter = 0;
+   int focusPlayer = nullPlayer;
+   int currentPlayer = nullPlayer;
+   int row;
+   int col;
+   for(auto& x : playerVictory){
+      x = false;
+   }
+   if(winner != nullPlayer){
+      playerVictory[winner] = true;
+   }
+
+   if(winner == nullPlayer){
+      //check rows for 3-in-a-row
+      for(row = 0; row < boardWidth; row++){
+         counter = 0;
+         focusPlayer = nullPlayer;
+         for(col = 0; col < boardWidth; col++){
+            currentPlayer = boardSpace[row][col].getPlayer();
+            if(focusPlayer == currentPlayer){
+               counter++;
+            }else{
+               counter = 1;
+               focusPlayer = currentPlayer;
+            }
+            if(counter == 3 && focusPlayer != nullPlayer){
+               playerVictory[focusPlayer] = true;
+            }
+         }
+      }
+
+      //check cols for 3-in-a-row
+      for(col = 0; col < boardWidth; col++){
+         counter = 0;
+         focusPlayer = nullPlayer;
+         for(row = 0; row < boardWidth; row++){
+            currentPlayer = boardSpace[row][col].getPlayer();
+            if(focusPlayer == currentPlayer){
+               counter++;
+            }else{
+               counter = 1;
+               focusPlayer = currentPlayer;
+            }
+            if(counter == 3 && focusPlayer != nullPlayer){
+               playerVictory[focusPlayer] = true;
+            }
+         }
+      }
+
+      //check diagonal for 3 in a row
+      for(int a = 0; a < boardWidth; a++){
+         counter = 0;
+         focusPlayer = nullPlayer;
+         for(int b = 0; b < boardWidth; b++){
+            row = b % boardWidth;
+            col = (a + b) % boardWidth;
+            currentPlayer = boardSpace[row][col].getPlayer();
+            if((row == 0) || (col == 0) || (currentPlayer != focusPlayer)){
+               focusPlayer = currentPlayer;
+               counter = 1;
+            }else{
+               counter++;
+            }
+            if(counter >= 3 && focusPlayer != nullPlayer){
+               playerVictory[focusPlayer] = true;
+            }
+         }
+      }
+
+      //check other diagonal for 3 in a row
+      for(int a = 0; a < boardWidth; a++){
+         counter = 0;
+         focusPlayer = nullPlayer;
+         for(int b = 0; b < boardWidth; b++){
+            row = boardWidth - 1 - (b % boardWidth);
+            col = ((a + b) % boardWidth);
+            currentPlayer = boardSpace[row][col].getPlayer();
+            if((row == boardWidth -1) || (col == 0) || (currentPlayer != focusPlayer)){
+               focusPlayer = currentPlayer;
+               counter = 1;
+            }else{
+               counter++;
+            }
+            if(counter >= 3 && focusPlayer != nullPlayer){
+               playerVictory[focusPlayer] = true;
+               cout<<"Player "<<focusPlayer<<" has a victory condition\n";
+            }
+         }
+      }
+
+   }
+
+   for(int a = 1; (a <= numPlayers) && (winner == nullPlayer); a++){
+      if(playerVictory[(turnTracker + a) % numPlayers]){
+         winner = (turnTracker + a) % numPlayers;
+      }
+   }
+   return winner;
 }
 
 //Player
@@ -156,6 +262,13 @@ int Position::getPlayer(){
 
 void Position::place(Token toPlace){
    myTokens.push_back(toPlace);
+}
+
+void Position::move(Position destination){
+   Token toMove;
+   toMove = myTokens.back();
+   destination.place(toMove);
+   myTokens.pop_back();
 }
 
 string Position::display(){

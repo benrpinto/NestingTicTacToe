@@ -7,7 +7,8 @@ constexpr int numPlayers = 2;
 constexpr int boardWidth = 3;
 constexpr int numSizes = 3;
 constexpr int sizeCopies = 2;
-constexpr bool selfConsume = false;
+constexpr bool selfConsume = true;
+constexpr bool placeOnly = false;
 
 //signalling constants
 constexpr int nullPlayer = -1;
@@ -36,8 +37,9 @@ class GameBoard{
 //   string requestMove();
 
 //   void updateBoard();
-//   int checkGameEnd();
-//   possible states include in progress, won by each player, tie
+   int checkGameEnd();
+//  possible states include in progress, won by each player, tie
+//  ties will not occur if pieces already on the board can be moved
    //undo move function
 };
 
@@ -74,6 +76,7 @@ class Position{
    int getSize();
    int getPlayer();
    void place(Token toPlace);
+   void move(Position destination);
    string display();
 //   void updatePosition;
 };
