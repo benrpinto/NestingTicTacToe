@@ -186,7 +186,6 @@ int GameBoard::checkGameEnd(){
             }
             if(counter >= 3 && focusPlayer != nullPlayer){
                playerVictory[focusPlayer] = true;
-               cout<<"Player "<<focusPlayer<<" has a victory condition\n";
             }
          }
       }
