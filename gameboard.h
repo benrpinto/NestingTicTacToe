@@ -23,60 +23,60 @@ class Position;
 using namespace std;
 
 class GameBoard{
+   private:
+      int turnTracker;
+      int winner;
+      vector<vector<Position>> boardSpace;
+      vector<Player> myPlayers;
+      int checkGameEnd();
+
    public:
-   GameBoard();   
-   int turnTracker;
-   int winner;
-   vector<vector<Position>> boardSpace;
-   vector<Player> myPlayers;
+      GameBoard();   
+      string display();
+      int progressGame();
+      bool validateMove(int posX, int posY, int tokenSize);
 
-   string display();
-   int progressGame();
-   bool validateMove(int posX, int posY, int tokenSize);
-
-//   string requestMove();
-
-//   void updateBoard();
-   int checkGameEnd();
-//  possible states include in progress, won by each player, tie
-//  ties will not occur if pieces already on the board can be moved
    //undo move function
 };
 
 class Player{
+   private:
+      vector<vector<Token>> myTokens;
+      int id;
+//      std::string name
+
    public:
-   vector<vector<Token>> myTokens;
-   int id;
-//   std::string makeMove();
-   //update token function
-   //std::string name
-   Player(int idIn);
-   string display();
-   bool hasToken(int tokenSize);
-   Token playToken(int tokenSize);
+      Player(int idIn);
+      string display();
+      bool hasToken(int tokenSize);
+      Token playToken(int tokenSize);
 };
 
 
 class Token{
+   private:
+      int size;
+      int playerID;
+
    public:
-   int size;
-   int playerID;
-   Token();
-   Token(int sizeIn, int playerIn);
-   int getSize();
-   int getPlayer();
-   string display();
+      Token();
+      Token(int sizeIn, int playerIn);
+      int getSize();
+      int getPlayer();
+      string display();
 };
 
 
 class Position{
+   private:
+      vector<Token> myTokens;
+
    public:
-   Position();
-   vector<Token> myTokens;
-   int getSize();
-   int getPlayer();
-   void place(Token toPlace);
-   void move(Position destination);
-   string display();
-//   void updatePosition;
+      Position();
+      int getSize();
+      int getPlayer();
+      void place(Token toPlace);
+      void move(Position destination);
+      string display();
+//      void updatePosition;
 };
