@@ -15,29 +15,27 @@ constexpr int nullPlayer = -1;
 constexpr int inProgress = -1;
 constexpr int tieGame = -2;
 
-class GameBoard;
+class Board;
 class Player;
 class Token;
 class Position;
+class GameBoard;
 
 using namespace std;
 
-class GameBoard{
+class Board{
    private:
-      int turnTracker;
-      int winner;
       vector<vector<Position>> boardSpace;
-      vector<Player> myPlayers;
-      int checkGameEnd();
-      bool validateMove(int fromX, int fromY, int toX, int toY);
-      bool validatePlace(int posX, int posY, int tokenSize);
 
    public:
-      GameBoard();   
+      Board();
       string display();
-      int progressGame();
-
-   //undo move function
+      bool validateMove(int fromX, int fromY, int toX, int toY);
+      bool validatePlace(int posX, int posY, Token toPlace);
+      void place(int posX,int posY,Token toPlace);
+      void move(int fromX, int fromY, int toX, int toY);
+      int checkGameEnd(int currentPlayer, int victor);
+      Token getToken(int posX, int posY);
 };
 
 class Player{
@@ -52,7 +50,6 @@ class Player{
       bool hasToken(int tokenSize);
       Token playToken(int tokenSize);
 };
-
 
 class Token{
    private:
@@ -80,4 +77,24 @@ class Position{
       void move(Position *destination);
       string display();
 //      void updatePosition;
+};
+
+
+class GameBoard{
+   private:
+      int turnTracker;
+      int winner;
+      vector<Player> myPlayers;
+      Board myBoard;
+
+      int checkGameEnd();
+      bool validateMove(int fromX, int fromY, int toX, int toY);
+      bool validatePlace(int posX, int posY, int tokenSize);
+
+   public:
+      GameBoard();   
+      string display();
+      int progressGame();
+
+   //undo move function
 };
