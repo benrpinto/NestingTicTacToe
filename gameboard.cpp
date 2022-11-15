@@ -4,14 +4,14 @@
 using namespace std;
 //GameBoard
 GameBoard::GameBoard(){
-   this->turnTracker = 0;
-   this->winner = nullPlayer;
+   turnTracker = 0;
+   winner = nullPlayer;
    for(int a = 0; a < numPlayers; a++){
-      this->myPlayers.push_back(Player(a));
+      myPlayers.push_back(Player(a));
    }
 }
 
-string GameBoard::display(){
+string GameBoard::display() const{
    string toReturn = "";
    for(auto& focusPlayer : myPlayers){
       toReturn += focusPlayer.display();
@@ -59,7 +59,8 @@ int GameBoard::progressGame(){
          toX = input.at(3) - '0';
          toY = input.at(4) - '0';
          toY = boardWidth - toY - 1;
-         validMove = validateMove(fromX,fromY,toX,toY);
+         validMove = input.at(2) == ' ';
+         validMove &= validateMove(fromX,fromY,toX,toY);
          if(validMove){
             myBoard.move(fromX,fromY,toX,toY);
          }
@@ -75,31 +76,26 @@ int GameBoard::progressGame(){
    return toReturn;
 }
 
-bool GameBoard::validateMove(int fromX, int fromY, int toX, int toY){
+bool GameBoard::validateMove(int fromX, int fromY, int toX, int toY) const{
    bool validMove = true;
    Token toMove;
    validMove &= myBoard.validateMove(fromX,fromY,toX,toY);
 
    //check that the player owns the token being moved
-   if(validMove){
-      toMove = myBoard.getToken(fromX,fromY);
-   }
-   validMove &= (toMove.getPlayer() == turnTracker);
-
+   validMove &= (myBoard.getToken(fromX,fromY).getPlayer() == turnTracker);
+   
    return validMove;
 }
 
-bool GameBoard::validatePlace(int posX, int posY, int tokenSize){
+bool GameBoard::validatePlace(int posX, int posY, int tokenSize) const{
    bool validMove = true;
-   Token toPlace;
 
    //you can only play tokens you have
    validMove &= myPlayers[turnTracker].hasToken(tokenSize);
    if(validMove){
-      toPlace = Token(tokenSize,turnTracker);
+      Token toPlace(tokenSize,turnTracker);
+      validMove &= myBoard.validatePlace(posX,posY,toPlace);
    }
-   validMove &= myBoard.validatePlace(posX,posY,toPlace);
-
    return validMove;
 }
 
@@ -114,7 +110,7 @@ Board::Board(){
    }
 }
 
-string Board::display(){
+string Board::display() const{
    string toReturn = "";
    for(auto& row : boardSpace){
       for(auto& cell : row){
@@ -125,43 +121,47 @@ string Board::display(){
    return toReturn;
 }
 
-bool Board::validatePlace(int posX, int posY, Token toPlace){
+bool Board::validatePlace(int posX, int posY, Token toPlace) const{
    bool validMove = true;
 
    //check that move position is on the board
    validMove &= (posX < boardWidth && posX >= 0);
    validMove &= (posY < boardWidth && posY >= 0);
 
-   //is the token big enough to go there?
-   validMove &= (toPlace.getSize() > boardSpace[posY][posX].getSize());
    validMove &= (toPlace.getSize() <= numSizes);
 
-   //if self consuming isn't allowed, you can't play on top of your own token
-   validMove &= (selfConsume || (toPlace.getPlayer() != boardSpace[posY][posX].getPlayer()));
+   //is the token big enough to go there?
+   if(validMove){
+      validMove &= (toPlace.getSize() > boardSpace[posY][posX].getSize());
+
+      //if self consuming isn't allowed, you can't play on top of your own token
+      validMove &= (selfConsume || (toPlace.getPlayer() != boardSpace[posY][posX].getPlayer()));
+   }
+
 
    return validMove;
 }
 
-bool Board::validateMove(int fromX, int fromY, int toX, int toY){
+bool Board::validateMove(int fromX, int fromY, int toX, int toY) const{
    bool validMove = true;
    //check that the from and to positions are on the board
    validMove &= (fromX < boardWidth && fromX >= 0);
    validMove &= (fromY < boardWidth && fromY >= 0);
    validMove &= (toX < boardWidth && toX >= 0);
    validMove &= (toY < boardWidth && toY >= 0);
+   if(validMove){
+      //check that the token being moved is larger than the token at the destination
+      validMove &= (boardSpace[fromY][fromX].getSize() >
+         boardSpace[toY][toX].getSize());
 
-   //check that the token being moved is larger than the token at the destination
-   validMove &= (boardSpace[fromY][fromX].getSize() >
-      boardSpace[toY][toX].getSize());
-
-   //if self consuming isn't allowed, you can't move on top of your own token
-   validMove &= (selfConsume || (boardSpace[fromY][fromX].getPlayer() !=
-      boardSpace[toY][toX].getPlayer()));
-
+      //if self consuming isn't allowed, you can't move on top of your own token
+      validMove &= (selfConsume || (boardSpace[fromY][fromX].getPlayer() !=
+         boardSpace[toY][toX].getPlayer()));
+   }
    return validMove;
 }
 
-Token Board::getToken(int posX, int posY){
+Token Board::getToken(int posX, int posY) const{
    bool validPos = true;
    int returnSize = 0;
    int returnPlayer = nullPlayer;
@@ -282,23 +282,23 @@ void Board::place(int posX, int posY, Token toPlace){
 }
 
 void Board::move(int fromX, int fromY, int toX, int toY){
-   boardSpace[fromY][fromX].move(&boardSpace[toY][toX]);
+   boardSpace[fromY][fromX].move(boardSpace[toY][toX]);
 }
 
 //Player
 Player::Player(int idIn){
-   this->id = idIn;
+   id = idIn;
    for(int a = 1; a <= numSizes ; a++){
       vector <Token> toAdd;
       for(int b = 0; b < sizeCopies; b++){
-         Token Focus(a,this->id);
+         const Token Focus(a,id);
          toAdd.push_back(Focus);
       }
-      this->myTokens.push_back(toAdd);
+      myTokens.push_back(toAdd);
    }
 }
 
-string Player::display(){
+string Player::display() const{
    string toReturn = "";
    toReturn += to_string(id) + "\n";
    for(auto& focusSize : myTokens){
@@ -310,7 +310,7 @@ string Player::display(){
    return toReturn;
 }
 
-bool Player::hasToken(int tokenSize){
+bool Player::hasToken(int tokenSize) const{
    bool toReturn = false;
    if(tokenSize > 0 && tokenSize <= numSizes){
       //tokens range from size 1 to numSize
@@ -321,25 +321,26 @@ bool Player::hasToken(int tokenSize){
 }
 
 Token Player::playToken(int tokenSize){
-   Token toReturn;
+   Token toReturnA;
    if(hasToken(tokenSize)){
-      toReturn = myTokens[tokenSize-1].back();
+      Token toReturnB = myTokens[tokenSize-1].back();
       myTokens[tokenSize-1].pop_back();
+      return toReturnB;
    }
-   return toReturn;
+   return toReturnA;
 }
 
 //Position
 Position::Position(){
-   this->myTokens.push_back(Token(0, nullPlayer));
+   myTokens.push_back(Token(0, nullPlayer));
 }
 
-int Position::getSize(){
+int Position::getSize() const{
    Token topToken = myTokens.back();
    return topToken.getSize();
 }
 
-int Position::getPlayer(){
+int Position::getPlayer() const{
    Token topToken = myTokens.back();
    return topToken.getPlayer();
 }
@@ -348,26 +349,22 @@ void Position::place(Token toPlace){
    myTokens.push_back(toPlace);
 }
 
-void Position::move(Position *destination){
-   destination->place(myTokens.back());
+void Position::move(Position& destination){
+   destination.place(myTokens.back());
    myTokens.pop_back();
 }
 
-string Position::display(){
+string Position::display() const{
    Token topToken = myTokens.back();
    return topToken.display();
 }
 
 //Token
-Token::Token(){
-   Token(0,nullPlayer);
-}
-Token::Token(int sizeIn, int playerIn){
-   this->size = sizeIn;
-   this->playerID = playerIn;
-}
+Token::Token():size(0),playerID(nullPlayer){}
 
-string Token::display(){
+Token::Token(int sizeIn, int playerIn):size(sizeIn),playerID(playerIn){}
+
+string Token::display() const{
    string toReturn = "";
    if(playerID == nullPlayer){
       toReturn = "./.";
@@ -377,10 +374,10 @@ string Token::display(){
    return toReturn;
 }
 
-int Token::getSize(){
+int Token::getSize() const{
    return size;
 }
 
-int Token::getPlayer(){
+int Token::getPlayer() const{
    return playerID;
 }
