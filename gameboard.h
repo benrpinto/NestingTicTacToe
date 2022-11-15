@@ -29,13 +29,13 @@ class Board{
 
    public:
       Board();
-      string display();
-      bool validateMove(int fromX, int fromY, int toX, int toY);
-      bool validatePlace(int posX, int posY, Token toPlace);
+      string display() const;
+      bool validateMove(int fromX, int fromY, int toX, int toY) const;
+      bool validatePlace(int posX, int posY, Token toPlace) const;
       void place(int posX,int posY,Token toPlace);
       void move(int fromX, int fromY, int toX, int toY);
       int checkGameEnd(int currentPlayer, int victor);
-      Token getToken(int posX, int posY);
+      Token getToken(int posX, int posY) const;
 };
 
 class Player{
@@ -46,22 +46,22 @@ class Player{
 
    public:
       Player(int idIn);
-      string display();
-      bool hasToken(int tokenSize);
+      string display() const;
+      bool hasToken(int tokenSize) const;
       Token playToken(int tokenSize);
 };
 
 class Token{
    private:
-      int size;
-      int playerID;
+      const int size;
+      const int playerID;
 
    public:
       Token();
       Token(int sizeIn, int playerIn);
-      int getSize();
-      int getPlayer();
-      string display();
+      int getSize() const;
+      int getPlayer() const;
+      string display() const;
 };
 
 
@@ -71,12 +71,11 @@ class Position{
 
    public:
       Position();
-      int getSize();
-      int getPlayer();
+      int getSize() const;
+      int getPlayer() const;
       void place(Token toPlace);
-      void move(Position *destination);
-      string display();
-//      void updatePosition;
+      void move(Position& destination);
+      string display() const;
 };
 
 
@@ -88,12 +87,12 @@ class GameBoard{
       Board myBoard;
 
       int checkGameEnd();
-      bool validateMove(int fromX, int fromY, int toX, int toY);
-      bool validatePlace(int posX, int posY, int tokenSize);
+      bool validateMove(int fromX, int fromY, int toX, int toY) const;
+      bool validatePlace(int posX, int posY, int tokenSize) const;
 
    public:
       GameBoard();   
-      string display();
+      string display() const;
       int progressGame();
 
    //undo move function
