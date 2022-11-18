@@ -321,13 +321,13 @@ bool Player::hasToken(int tokenSize) const{
 }
 
 Token Player::playToken(int tokenSize){
-   Token toReturnA;
-   if(hasToken(tokenSize)){
-      Token toReturnB = myTokens[tokenSize-1].back();
+   bool hasTok = hasToken(tokenSize);
+   Token blank;
+   Token toReturn = hasTok? myTokens[tokenSize-1].back():blank;
+   if(hasTok){
       myTokens[tokenSize-1].pop_back();
-      return toReturnB;
    }
-   return toReturnA;
+   return toReturn;
 }
 
 //Position
