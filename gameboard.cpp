@@ -20,7 +20,7 @@ string GameBoard::display() const{
    return toReturn;
 }
 
-int GameBoard::progressGame(){
+pair <bool,int> GameBoard::progressGame(){
    string input;
    int posX;
    int posY;
@@ -30,50 +30,54 @@ int GameBoard::progressGame(){
    int toY;
    int tokenSize;
    bool validMove = false;
+   int victor;
 
-   while(!validMove){
-      getline(cin,input);
-      if(input == "q"){
-         //quitting is always a valid mov
-         validMove = true;
-         //will have to change to accommodate for more than 2 players
-         winner = (turnTracker + 1) % numPlayers;
-      }else if(input.length() == 3){
-         //extract data from user input
-         posX = input.at(0) - '0';
-         posY = input.at(1) - '0';
-	 //0 is bottom for the user, but top for us
-         posY = boardWidth - posY - 1;
-         tokenSize = input.at(2) - '0';
-         validMove = validatePlace(posX, posY, tokenSize);
-         if(validMove){
-            Token toPlay = myPlayers[turnTracker].playToken(tokenSize);
-            if(toPlay.getPlayer() != nullPlayer){
-               myBoard.place(posX,posY,toPlay);
-            }
+   getline(cin,input);
+   if(input == "q"){
+//quitting is always a valid mov
+      validMove = true;
+//will have to change to accommodate for more than 2 players
+      winner = (turnTracker + 1) % numPlayers;
+   }else if(input.length() == 3){
+//extract data from user input
+      posX = input.at(0) - '0';
+      posY = input.at(1) - '0';
+//0 is bottom for the user, but top for us
+      posY = boardWidth - posY - 1;
+      tokenSize = input.at(2) - '0';
+      validMove = validatePlace(posX, posY, tokenSize);
+      if(validMove){
+         Token toPlay = myPlayers[turnTracker].playToken(tokenSize);
+         if(toPlay.getPlayer() != nullPlayer){
+            myBoard.place(posX,posY,toPlay);
          }
-      }else if(input.length() == 5){
-         fromX = input.at(0) - '0';
-         fromY = input.at(1) - '0';
-         fromY = boardWidth - fromY - 1;
-         toX = input.at(3) - '0';
-         toY = input.at(4) - '0';
-         toY = boardWidth - toY - 1;
-         validMove = input.at(2) == ' ';
-         validMove &= validateMove(fromX,fromY,toX,toY);
-         if(validMove){
-            myBoard.move(fromX,fromY,toX,toY);
-         }
-      }else{
-         validMove = false;
       }
-      if(!validMove){
-         cout<<"Invalid Move\n";
+   }else if(input.length() == 5){
+      fromX = input.at(0) - '0';
+      fromY = input.at(1) - '0';
+      fromY = boardWidth - fromY - 1;
+      toX = input.at(3) - '0';
+      toY = input.at(4) - '0';
+      toY = boardWidth - toY - 1;
+      validMove = input.at(2) == ' ';
+      validMove &= validateMove(fromX,fromY,toX,toY);
+      if(validMove){
+         myBoard.move(fromX,fromY,toX,toY);
       }
+   }else{
+      validMove = false;
    }
-   int toReturn = checkGameEnd();
-   turnTracker = (turnTracker + 1) % numPlayers;
-   return toReturn;
+   if(!validMove){
+      cout<<"Invalid Move\n";
+   }
+   
+   if(validMove){
+      victor = checkGameEnd();
+      turnTracker = (turnTracker + 1) % numPlayers;
+   }else{
+      victor = winner;
+   }
+   return make_pair(validMove,victor);
 }
 
 bool GameBoard::validateMove(int fromX, int fromY, int toX, int toY) const{

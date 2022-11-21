@@ -93,7 +93,7 @@ class GameBoard{
    public:
       GameBoard();   
       string display() const;
-      int progressGame();
+      pair <bool,int> progressGame();
 
    //undo move function
 };
