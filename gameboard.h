@@ -86,11 +86,11 @@ class GameBoard{
       vector<Player> myPlayers;
       Board myBoard;
 
+   public:
       int checkGameEnd();
       bool validateMove(int fromX, int fromY, int toX, int toY) const;
       bool validatePlace(int posX, int posY, int tokenSize) const;
 
-   public:
       GameBoard();   
       string display() const;
       pair <bool,int> progressGame();

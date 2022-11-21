@@ -2,7 +2,8 @@
 
 class Test{
    public:
-   void allTests();
-   void gameStart();
-   //test functions
+      void allTests();
+      void gameStart();
+      void VM1();
+      void VP1();
 };
