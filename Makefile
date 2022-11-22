@@ -1,11 +1,20 @@
-.RECIPEPREFIX = >
-all: game test
+.PHONY: all
+all: game.out test.out
 
-game: gameboard.cpp
->g++ -Wall -Werror main.cpp gameboard.cpp -o ttt.out
+game: game.out
 
-test: test.cpp
->g++ -Wall -Werror test.cpp gameboard.cpp -o test.out
+test: test.out
 
+game.out: main.cpp gameboard.cpp gameboard.h board.cpp board.h	\
+		player.cpp player.h position.cpp position.h token.cpp token.h
+	g++ -Wall -Werror main.cpp gameboard.cpp board.cpp player.cpp \
+		position.cpp token.cpp -o game.out
+
+test.out: test.cpp gameboard.cpp gameboard.h board.cpp board.h \
+		player.cpp player.h position.cpp position.h token.cpp token.h
+	g++ -Wall -Werror test.cpp gameboard.cpp board.cpp player.cpp \
+		position.cpp token.cpp -o test.out
+
+.PHONY: clean
 clean:
->rm -f test.out ttt.out
+	rm -f game.out test.out
