@@ -1,19 +1,19 @@
 .PHONY: all
-all: game.out test.out
+all: gobblet_gobblers.out gobblet_gobblers_test.out
 
-game: game.out
+gobblet_gobblers: game.out
 
-test: test.out
+gobblet_gobblers_test: test.out
 
-game.out: main.cpp gameboard.cpp gameboard.h board.cpp board.h	\
-		player.cpp player.h position.cpp position.h token.cpp token.h
-	g++ -Wall -Werror main.cpp gameboard.cpp board.cpp player.cpp \
-		position.cpp token.cpp -o game.out
+gobblet_gobblers.out: main.cpp Gobblet_Gobblers/gameboard.cpp Gobblet_Gobblers/gameboard.h Gobblet_Gobblers/board.cpp Gobblet_Gobblers/board.h	\
+		Gobblet_Gobblers/player.cpp Gobblet_Gobblers/player.h Gobblet_Gobblers/position.cpp Gobblet_Gobblers/position.h Gobblet_Gobblers/token.cpp Gobblet_Gobblers/token.h
+	g++ -Wall -Werror main.cpp Gobblet_Gobblers/gameboard.cpp Gobblet_Gobblers/board.cpp Gobblet_Gobblers/player.cpp \
+		Gobblet_Gobblers/position.cpp Gobblet_Gobblers/token.cpp -o gobblet_gobblers.out
 
-test.out: test.cpp gameboard.cpp gameboard.h board.cpp board.h \
-		player.cpp player.h position.cpp position.h token.cpp token.h
-	g++ -Wall -Werror test.cpp gameboard.cpp board.cpp player.cpp \
-		position.cpp token.cpp -o test.out
+gobblet_gobblers_test.out: Gobblet_Gobblers/test.cpp Gobblet_Gobblers/gameboard.cpp Gobblet_Gobblers/gameboard.h Gobblet_Gobblers/board.cpp Gobblet_Gobblers/board.h \
+		Gobblet_Gobblers/player.cpp Gobblet_Gobblers/player.h Gobblet_Gobblers/position.cpp Gobblet_Gobblers/position.h Gobblet_Gobblers/token.cpp Gobblet_Gobblers/token.h
+	g++ -Wall -Werror Gobblet_Gobblers/test.cpp Gobblet_Gobblers/gameboard.cpp Gobblet_Gobblers/board.cpp Gobblet_Gobblers/player.cpp \
+		Gobblet_Gobblers/position.cpp Gobblet_Gobblers/token.cpp -o gobblet_gobblers_test.out
 
 .PHONY: clean
 clean:
