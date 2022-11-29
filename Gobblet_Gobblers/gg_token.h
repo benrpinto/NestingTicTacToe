@@ -3,14 +3,14 @@
 
 using namespace std;
 
-class Token{
+class GGToken{
    private:
       const int size;
       const int playerID;
 
    public:
-      Token();
-      Token(int sizeIn, int playerIn);
+      GGToken();
+      GGToken(int sizeIn, int playerIn);
       int getSize() const;
       int getPlayer() const;
       string display() const;
