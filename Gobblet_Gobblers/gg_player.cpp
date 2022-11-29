@@ -1,22 +1,40 @@
-#include "player.h"
-#include "gameboard.h"
+#include "../basegame.h"
+#include "gg_player.h"
 
 using namespace std;
 
-//Player
-Player::Player(int idIn){
+//GGPlayer
+GGPlayer::GGPlayer(int idIn){
    id = idIn;
    for(int a = 1; a <= numSizes ; a++){
-      vector <Token> toAdd;
+      vector <GGToken> toAdd;
       for(int b = 0; b < sizeCopies; b++){
-         const Token Focus(a,id);
+         const GGToken Focus(a,id);
          toAdd.push_back(Focus);
       }
       myTokens.push_back(toAdd);
    }
 }
 
-string Player::display() const{
+bool GGPlayer::validateMove(string move) const{
+   bool toReturn = true;
+   if(move.length() == 3){
+      int tokenSize = move.at(2) - '0';
+      toReturn = hasToken(tokenSize);
+   }
+   return toReturn;
+}
+
+bool GGPlayer::implementMove(string move){
+   bool toReturn = validateMove(move);
+   if(toReturn && move.length() == 3){
+      int tokenSize = move.at(2) - '0';
+      myTokens[tokenSize-1].pop_back();
+   }
+   return toReturn;
+}
+
+string GGPlayer::display() const{
    string toReturn = "";
    toReturn += to_string(id) + "\n";
    for(auto& focusSize : myTokens){
@@ -28,22 +46,12 @@ string Player::display() const{
    return toReturn;
 }
 
-bool Player::hasToken(int tokenSize) const{
+bool GGPlayer::hasToken(int tokenSize) const{
    bool toReturn = false;
    if(tokenSize > 0 && tokenSize <= numSizes){
       //tokens range from size 1 to numSize
       //indices start at 0, so subtract 1
       toReturn = !myTokens[tokenSize -1].empty();
-   }
-   return toReturn;
-}
-
-Token Player::playToken(int tokenSize){
-   bool hasTok = hasToken(tokenSize);
-   Token blank;
-   Token toReturn = hasTok? myTokens[tokenSize-1].back():blank;
-   if(hasTok){
-      myTokens[tokenSize-1].pop_back();
    }
    return toReturn;
 }

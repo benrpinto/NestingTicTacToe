@@ -1,5 +1,5 @@
 #include <iostream>
-#include "gameboard.h"
+#include "Gobblet_Gobblers/gg_game.h"
 
 constexpr bool runTests = true;
 
@@ -9,7 +9,7 @@ int main(int argc, char** argv){
    int winner = nullPlayer;
    bool validMove;
    cout<<"Welcome to Nesting Tic Tac Toe\n";
-   GameBoard myGame;
+   GGGame myGame;
    cout<<myGame.display();
    while(winner == nullPlayer){
       pair<bool, int> result = myGame.progressGame();
