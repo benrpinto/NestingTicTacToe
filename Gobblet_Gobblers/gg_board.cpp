@@ -13,8 +13,9 @@ GGBoard::GGBoard(){
 
 GGBoard::~GGBoard(){
    for(int a = 0; a < boardWidth; a++ ){
-      boardSpace.pop_back(); 
+      boardSpace[a].clear(); 
    }
+   boardSpace.clear();
    
 }
 

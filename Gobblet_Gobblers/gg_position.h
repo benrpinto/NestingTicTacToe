@@ -11,6 +11,7 @@ class GGPosition{
 
    public:
       GGPosition();
+      ~GGPosition();
       int getSize() const;
       int getPlayer() const;
       void place(GGToken toPlace);

@@ -8,6 +8,10 @@ GGPosition::GGPosition(){
    myTokens.push_back(GGToken(0, nullPlayer));
 }
 
+GGPosition::~GGPosition(){
+   myTokens.clear();
+}
+
 int GGPosition::getSize() const{
    GGToken topToken = myTokens.back();
    return topToken.getSize();
