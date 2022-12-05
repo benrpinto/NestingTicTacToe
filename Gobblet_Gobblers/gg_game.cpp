@@ -12,8 +12,7 @@ GGGame::GGGame(){
 }
 
 GGGame::~GGGame(){
-   myPlayers.pop_back();
-   myPlayers.pop_back();
+   myPlayers.clear();
 }
 
 pair <bool,int> GGGame::progressGame(){

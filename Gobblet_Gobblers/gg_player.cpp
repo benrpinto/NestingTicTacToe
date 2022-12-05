@@ -16,6 +16,11 @@ GGPlayer::GGPlayer(int idIn){
    }
 }
 
+GGPlayer::~GGPlayer(){
+   myTokens.clear();
+}
+
+
 bool GGPlayer::validateMove(string move) const{
    bool toReturn = true;
    if(move.length() == 3){

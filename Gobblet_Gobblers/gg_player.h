@@ -17,6 +17,7 @@ class GGPlayer : BasePlayer{
 
    public:
       GGPlayer(int idIn);
+      ~GGPlayer();
       bool hasToken(int tokenSize) const;
       bool validateMove(string move) const;
       bool implementMove(string move);
